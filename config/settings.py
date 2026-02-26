@@ -15,6 +15,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY = 'django-insecure-wso2b*w&&_8*%v7zjqm06j$=lx)7&bql@y%01p8-)k2h%&w1q@'
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only")
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://render-test-5zmy.onrender.com",
+]
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "0") == "1"
 
