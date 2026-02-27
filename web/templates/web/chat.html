@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>LLM Test (Admin Only)</title>
+
+  <!--
+    Django의 CSRF 토큰을 HTML에 심어두고
+    JS fetch 요청에 헤더로 실어서 보내면
+    csrf_exempt 없이도 POST가 안전하게 동작함.
+  -->
+  <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+  <h1>LLM 테스트 (관리자 전용)</h1>
+
+  <p>
+    여기서 입력한 내용은 DB(ChatLog)에 저장됩니다.
+  </p>
+
+  <textarea id="prompt" rows="10" cols="90" placeholder="고민/질문을 입력하세요..."></textarea>
+  <br />
+  <button id="send">전송</button>
+
+  <h2>응답(JSON)</h2>
+  <pre id="result">아직 응답 없음</pre>
+
+  <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const promptEl = document.getElementById("prompt");
+    const resultEl = document.getElementById("result");
+    const btn = document.getElementById("send");
+
+    btn.addEventListener("click", async () => {
+      const prompt = promptEl.value;
+
+      resultEl.textContent = "요청 중...";
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken, // ✅ CSRF 통과 핵심
+          },
+          body: JSON.stringify({ prompt }),
+        });
+
+        const payload = await res.json();
+
+        // 에러면 에러 JSON을 그대로 보여줌
+        if (!res.ok) {
+          resultEl.textContent = JSON.stringify(payload, null, 2);
+          return;
+        }
+
+        // 정상 응답이면 data(answer/risk_level/followups)를 보기 좋게 출력
+        resultEl.textContent = JSON.stringify(payload, null, 2);
+      } catch (err) {
+        resultEl.textContent = "네트워크/서버 오류: " + err;
+      }
+    });
+  </script>
+</body>
+</html>

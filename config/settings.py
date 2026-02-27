@@ -14,6 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-wso2b*w&&_8*%v7zjqm06j$=lx)7&bql@y%01p8-)k2h%&w1q@'
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "dev-only")
 
 CSRF_TRUSTED_ORIGINS = [
     "https://render-test-5zmy.onrender.com",
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'web',
 ]
 
